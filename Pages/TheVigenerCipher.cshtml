@@ -1,0 +1,96 @@
+﻿@page
+@model MyFavoriteEncryption.Pages.TheVigenerCipherModel
+@{
+  ViewData["Title"] = "Шифр Виженера";
+}
+<div class="row justify-content-center">
+    <div class="col-10">
+        <div class="text-left pl-5">
+            <h1>Шифр Виженера</h1>
+        </div>
+        <div class="text-center text-danger">
+            <h3>@TheVigenerCipherModel.dataInfo.ErrorText</h3>
+        </div>
+        <div class="row">
+            <a class="btn btn-outline-success col-lg-4 mb-3 mt-3 offset-1" data-toggle="collapse" href="#downloadFileMenu" role="button" aria-expanded="false" aria-controls="collapseExample1">
+                Выбрать файл
+            </a>
+            <a class="btn btn-outline-success col-lg-4 mb-3 mt-3 offset-1" data-toggle="collapse" href="#exportFileMenu" role="button" aria-expanded="false" aria-controls="collapseExample2">
+                Сохранить результат в файл
+            </a>
+        </div>
+        <div class="collapse" id="downloadFileMenu">
+            <div class="card card-body bg-dark">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-lg-5 offset-1">
+                            <div class="form-group">
+                                <label for="dwnlFile">Выбрать файл: </label>
+                                <input type="file" name="uploadedFile" id="dwnFile" accept="text/plain, application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit" asp-page-handler="UploadFileBtn">Загрузить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="collapse" id="exportFileMenu">
+            <div class="card card-body bg-dark">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-lg-5 offset-1">
+                            <div class="form-group">
+                                <label for="exportlFile">Формат: </label>
+                                <select class="form-select" id="exportlFile" name="typeFileSelect">
+                                    <option value="txt" selected>.txt</option>
+                                    <option value="docx">.docx</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary col-lg-5" asp-page-handler="GetFileAsync">Получить файл</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="form-group">
+                @if (TheVigenerCipherModel.dataInfo.AttemptToReadFile)
+                {
+                    @if (TheVigenerCipherModel.dataInfo.UploadedText == null)
+                    {
+                        <div class="text-danger">
+                            <h3>Ошибка чтения файла</h3>
+                        </div>
+                    }
+                    else
+                    @if (TheVigenerCipherModel.dataInfo.UploadedText.Length == 0)
+                    {
+                        <div class="text-danger">
+                            <h3>Файл пуст</h3>
+                        </div>
+                    }
+                }
+
+                <label for="textForJob">Текст: </label>
+                <textarea rows="5" class="form-control" type="text" name="textForJob" id="textForJob" placeholder="Текст">
+@if (!String.IsNullOrEmpty(TheVigenerCipherModel.dataInfo.UploadedText))
+{
+    @TheVigenerCipherModel.dataInfo.UploadedText
+}
+</textarea>
+            </div>
+            <div class="form-group">
+                <label for="keyForJob">Ключевое слово: </label>
+                <input class="form-control" type="text" name="keyword" id="keyForJob" placeholder="Ключевое слово" />
+            </div>
+            <div class="row text-center">
+                <button type="submit" class="btn btn-outline-info mb-3 mt-3 col-lg-6" asp-page-handler="DecryptBtn">Расшифровать</button>
+                <button type="submit" class="btn btn-outline-info mb-3 mt-3 col-lg-6" asp-page-handler="CryptBtn">Зашифровать</button>
+            </div>
+            @if (!String.IsNullOrEmpty(TheVigenerCipherModel.dataInfo.ResultText))
+            {
+                <label>@TheVigenerCipherModel.dataInfo.ResultText </label>
+            }
+        </form>
+    </div>
+</div>
